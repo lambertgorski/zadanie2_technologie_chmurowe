@@ -54,7 +54,7 @@ jobs:
         name: Budowanie Docker Image
         uses: docker/build-push-action@v7
         with:
-          content: .
+          context: .
           platforms: linux/amd64,linux/arm64
           push: false
           cache-from: type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2:cache

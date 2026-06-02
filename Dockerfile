@@ -1,5 +1,5 @@
 
-FROM python:3.12-bookworm as builder 
+FROM python:3.12-bookworm AS builder 
 
 WORKDIR /usr/src/app
 
@@ -14,7 +14,7 @@ RUN pip install --user --no-cache-dir -r requirements.txt
 # kodu pythona a czasami pliki .C, które musiałby zostać skompilowane (szczególnie na linux)
 # zaleca się zastosowanie multistage building
 
-FROM python:3.12-slim-bookworm as prod
+FROM python:3.12-slim-bookworm AS prod
 
 
 # postanowiłem nie używać obrazu `scratch` ponieważ 
