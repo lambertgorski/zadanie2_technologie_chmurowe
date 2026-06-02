@@ -1,0 +1,83 @@
+name: zadanie2_lambert_gorski
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  zadanie2_budowanie_obrazu_docker:
+    name: Budowanie, tagowanie i wysyłanie obrazu na DockerHub
+    runs-on: ubuntu-latest
+
+    steps:
+      -
+        name: Klonowanie repo
+        uses: actions/checkout@v6
+      -
+        name: Definiowanie metadanych
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/zadanie2
+          flavor: latest=false
+          tags: |
+            type=sha,priority=100,prefix=sha-,format=short
+            type=semver,priority=200,pattern={{version}}
+
+      -
+        name: QEMU set-up
+        uses: docker/setup-qemu-action@4
+
+      -
+        name: Buildx set-up
+        uses: docker/setup-buildx-action@v4
+
+      -
+        name: Logowanie na Dockerhub
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}   
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      -
+        name: Logowanie na GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - 
+        name: Budowanie Docker Image
+        uses: docker/build-push-action@v7
+        with:
+          content: .
+          platforms: linux/amd64,linux/arm64
+          push: false
+          cache-from: type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2:cache
+          tags: ghcr.io/${{ github.repository_owner }}/zadanie2:test-cve
+
+      -
+        name: Uruchamienie skanera Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'ghcr.io/${{ github.repository_owner }}/zadanie2:test-cve'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+
+      - 
+        name: Wysyłanie obrazu Docker oraz Cache
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          cache-from: type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2:cache
+          cache-to: type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/zadanie2:cache,mode=max
+          tags: ${{ steps.meta.outputs.tags }}
