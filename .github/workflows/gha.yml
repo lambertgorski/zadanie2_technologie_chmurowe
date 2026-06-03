@@ -8,7 +8,7 @@ on:
 
 jobs:
   zadanie2_budowanie_obrazu_docker:
-    name: Budowanie, tagowanie i wysyłanie obrazu na DockerHub
+    name: Budowanie, tagowanie i wysyłanie obrazu na GHCR
     runs-on: ubuntu-latest
 
     steps:
@@ -51,7 +51,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - 
-        name: Budowanie Docker Image
+        name: Budowanie Docker Image lokalnie
         uses: docker/build-push-action@v7
         with:
           context: .
