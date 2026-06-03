@@ -25,7 +25,7 @@ Zastosowałem stały tag `cache` ponieważ gdybym go nie użył to nie miałbym 
 ## 8. Uruchamienie skanera Trivy
 Skaner przerwie pracę pipline, jeżeli napotka błędy `CRITICAL` lub `HIGH` (co się wydarzyło).
 
-Problem okazał się `debian 12.14`, który ma `HIGH: 7`, `CRITICAL: 2` błędów. Widać to w ostatnim workflow: `Wyrzucenie wielopratofrmowej budowy dla obrazu testowego v1.0.3`. Zgodnie z zadaniem obraz nie został wysłany do ghcr.io, ani cache na DockerHub
+Problem okazał się `debian 12.14`, który ma `HIGH: 7`, `CRITICAL: 2` błędów. Widać to w workflow: `Wyrzucenie wielopratofrmowej budowy dla obrazu testowego v1.0.3`. Zgodnie z zadaniem obraz nie został wysłany do ghcr.io, ani cache na DockerHub
 
 ## 9. Budowanie i wysyłanie bezpiecznego obrazu Docker oraz Cache
 
